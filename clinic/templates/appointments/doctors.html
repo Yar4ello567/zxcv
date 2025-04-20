@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Our Doctors{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h2>Our Doctors</h2>
+    </div>
+    <div class="col-md-4">
+        <select class="form-select" id="specializationFilter">
+            <option value="">All Specializations</option>
+            {% for spec in specializations %}
+                <option value="{{ spec.id }}" {% if selected_spec == spec.id|stringformat:"s" %}selected{% endif %}>
+                    {{ spec.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<div id="doctorListContainer">
+    {% include 'appointments/partials/doctor_list.html' %}
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    $('#specializationFilter').change(function() {
+        const specId = $(this).val();
+        const url = new URL(window.location.href);
+        
+        if (specId) {
+            url.searchParams.set('specialization', specId);
+        } else {
+            url.searchParams.delete('specialization');
+        }
+        
+        // AJAX запрос
+        $.ajax({
+            url: url.toString(),
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            success: function(data) {
+                $('#doctorListContainer').html(data.html);
+                history.pushState(null, '', url.toString());
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

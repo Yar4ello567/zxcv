@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Welcome to Our Clinic</h1>
+    <p class="lead">Quality healthcare services for everyone</p>
+    
+    {% if user.is_authenticated %}
+        <div class="alert alert-success">
+            You are logged in as {{ user.get_full_name|default:user.username }}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            Please <a href="{% url 'login' %}">login</a> or <a href="{% url 'register' %}">register</a> to book appointments.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
